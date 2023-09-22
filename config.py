@@ -7,7 +7,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = os.getenv("SECRET_KEY")
+    SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     
 class DevelopmentConfig(Config):
@@ -15,3 +15,5 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
 
+class ProductionConfig(Config):
+    DEBUG = False

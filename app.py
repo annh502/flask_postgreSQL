@@ -1,6 +1,16 @@
 from flask import Flask
 from database import database
 
-app = Flask(__name__)
-if __name__ == '__app__':
-    app.run(host='0.0.0.0', port=8000)
+def create_app():
+    app = Flask(__name__)
+
+    app.config.from_object('config.DevelopmentConfig')
+
+    database.init_app(app)
+
+    from apps.blog.models import Post
+
+    return app
+
+if __name__ == "__main__":
+    create_app().run()
