@@ -1,9 +1,9 @@
-flask
+flask==2.2.2
+flask-sqlalchemy==3.0.2
 python-dotenv
 psycopg2-binary
-Flask-SQLAlchemy===2.4.1
 Flask-Script==2.0.6
 Flask-Migrate==2.5.2
 Pillow
 PyJWT==2.1.0
-Werkzeug==2.0.1
+Werkzeug
