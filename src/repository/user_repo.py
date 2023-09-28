@@ -3,9 +3,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database.database import db
 from src.share.Result import Result
 from src.models.User import User
-from . import connection
-cur = connection.cursor()
-
 
 def encrypt_password(password):
     """Encrypt password"""
@@ -14,10 +11,7 @@ def encrypt_password(password):
 
 def get_all():
     """Get all users"""
-    query = "SELECT * FROM " + User.__tablename__
-    cur.execute(query)
     users = User.query.all()
-    # users = cur.fetchall()
     return users
 
 

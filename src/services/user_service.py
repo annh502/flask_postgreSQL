@@ -1,10 +1,5 @@
 import re
-import jwt
-import os
-
 from werkzeug.exceptions import Unauthorized
-
-from src.models.User import User
 from src.share.Result import Result
 from src.repository import user_repo
 
@@ -45,27 +40,27 @@ def login_services(email, password):
 
 
 def create_user(name, email, password):
-    result = user_repo.save(name, email, password)
-    if not result.is_success():
-        return Result.failed(result.data)
-    else:
-        return Result.success(result.data)
+    return user_repo.save(name, email, password)
+    # if not result.is_success():
+    #     return Result.failed(result.data)
+    # else:
+    #     return Result.success(result.data)
 
 
 def update_user(user_id, data):
-    result = user_repo.update(user_id, data)
-    if not result.is_success():
-        return Result.failed(result.data)
-    else:
-        return Result.success(result.data)
+    return user_repo.update(user_id, data)
+    # if not result.is_success():
+    #     return Result.failed(result.data)
+    # else:
+    #     return Result.success(result.data)
 
 
 def delete_user(user_id):
-    result = user_repo.delete(user_id)
-    if not result.is_success():
-        return Result.failed(result.data)
-    else:
-        return Result.success(result.data)
+    return user_repo.delete(user_id)
+    # if not result.is_success():
+    #     return Result.failed(result.data)
+    # else:
+    #     return Result.success(result.data)
 
 
 def disable_account(user_id, account_id):
@@ -86,7 +81,3 @@ def disable_account(user_id, account_id):
         return Result.failed(result.data)
     else:
         return Result.success(result.data)
-
-
-
-

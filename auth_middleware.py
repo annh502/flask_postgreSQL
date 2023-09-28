@@ -22,8 +22,6 @@ def token_required(f):
             current_user = user_repo.get_by_id(data)
             if current_user is None:
                 return unauthorized("Invalid Authentication token!")
-            # if not current_user["active"]:
-            #     abort(403)
         except jwt.ExpiredSignatureError:
             return unauthorized("Your session is over. Please login again.")
         except jwt.InvalidTokenError:

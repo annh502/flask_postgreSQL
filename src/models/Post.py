@@ -19,6 +19,7 @@ class Post(db.Model):
         self.title = title
         self.short_description = short_description
         self.body = body
+        self.author_id = author_id
 
     def __repr__(self):
         return"<id {}".format(self.id)
