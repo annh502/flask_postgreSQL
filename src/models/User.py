@@ -14,10 +14,10 @@ from flask import current_app as run_app
 class User(db.Model):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    email: Mapped[str] = mapped_column(db.String(150), unique=True)
-    password: Mapped[str] = mapped_column(db.String(150))
-    username: Mapped[str] = mapped_column(db.String(150), unique=True)
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True, nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(db.String(150), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(db.String(150), nullable=False)
+    username: Mapped[str] = mapped_column(db.String(150), unique=True, nullable=False)
     posts = db.relationship("Post", backref="author", lazy="select")
     registered_on = mapped_column(db.DateTime(timezone=True), default=func.now(), nullable=False)
     admin: Mapped[bool] = mapped_column(db.Boolean, nullable=False, default=False)
@@ -27,6 +27,14 @@ class User(db.Model):
         self.username = username
         self.password = password
 
+    def __str__(self):
+        return '''
+        {
+            "id": {},
+            "email": {},
+            "username": {},
+            "registered_on": {}
+        '''.format(self.id, self.email, self.username, self.registered_on)
 
     def isAdmin(self):
         return self.admin

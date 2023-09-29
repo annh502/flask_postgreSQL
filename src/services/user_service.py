@@ -1,7 +1,15 @@
 import re
 from werkzeug.exceptions import Unauthorized
+
+from src.models.User import User
 from src.share.Result import Result
 from src.repository import user_repo
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+def encrypt_password(password):
+    """Encrypt password"""
+    return generate_password_hash(password)
 
 
 def validate_email_and_password(data):
@@ -28,56 +36,72 @@ def validate_email(email):
         return Result.failed(str(e))
 
 
-def login_services(email, password):
-    result = user_repo.login(email, password)
-    if not result.is_success():
-        return Result.failed({"email": email, "password": password})
-    else:
-        try:
-            return Result.success(result.data)
-        except Exception as e:
-            return Result.failed(str(e))
+def login(email, password):
+    """Login a user"""
+    try:
+        if not validate_email(email):
+            return Result.failed(email)
+        user_result = user_repo.get_by_email(email)
+        user = user_result.data
+        if not user_result.is_success():
+            return Result.failed(email)
+        elif not check_password_hash(user.password, password):
+            return Result.failed(password)
+        auth_token = user.encode_auth_token(user.id)
+        return Result.success(auth_token)
+    except Exception as e:
+        return Result.failed(str(e))
 
 
 def create_user(name, email, password):
-    return user_repo.save(name, email, password)
-    # if not result.is_success():
-    #     return Result.failed(result.data)
-    # else:
-    #     return Result.success(result.data)
+    try:
+        user = user_repo.get_by_email(email)
+        if user.is_success():
+            return Result.failed("Email exists: " + str(email))
+        if name is None:
+            return Result.failed("Username must not be null.")
+        new_user = User(email, name, generate_password_hash(password))
+        return new_user.encode_auth_token(new_user.id) \
+            if user_repo.save(new_user).is_success() \
+            else "Cannot save"
+    except Exception as e:
+        return Result.failed("Error in user services: " + str(e))
 
 
 def update_user(user_id, data):
-    return user_repo.update(user_id, data)
-    # if not result.is_success():
-    #     return Result.failed(result.data)
-    # else:
-    #     return Result.success(result.data)
+    try:
+        user_result = user_repo.get_by_id(user_id)
+        if not user_result.is_success():
+            return Result.failed(user_id)
+        return user_repo.update(user_result.data, data)
+    except Exception as e:
+        return Result.failed("Error in user services: " + str(e))
 
 
 def delete_user(user_id):
-    return user_repo.delete(user_id)
-    # if not result.is_success():
-    #     return Result.failed(result.data)
-    # else:
-    #     return Result.success(result.data)
+    try:
+        user_result = user_repo.get_by_id(user_id)
+        if not user_result.is_success():
+            return Result.failed(user_id)
+        return user_repo.delete(user_result.data)
+    except Exception as e:
+        return Result.failed("Error in user services: " + str(e))
 
 
 def disable_account(user_id, account_id):
-    admin = user_repo.get_by_id(user_id)
-    if not admin.is_success():
-        return Result.failed(admin.data)
+    try:
+        admin = user_repo.get_by_id(user_id)
+        if not admin.is_success():
+            return Result.failed(admin.data)
 
-    account = user_repo.get_by_id(account_id)
-    if not account.is_success():
-        return Result.failed(account.data)
+        account = user_repo.get_by_id(account_id)
+        if not account.is_success():
+            return Result.failed(account.data)
 
-    admin = admin.data
-    if not admin.isAdmin():
-        raise Unauthorized("You're not authorized to delete this user!")
+        admin = admin.data
+        if not admin.isAdmin():
+            raise Unauthorized("You're not authorized to delete this user!")
 
-    result = user_repo.delete(account_id)
-    if not result.is_success():
-        return Result.failed(result.data)
-    else:
-        return Result.success(result.data)
+        return user_repo.delete(account.data)
+    except Exception as e:
+        return Result.failed("Error in user services: " + str(e))

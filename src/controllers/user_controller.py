@@ -37,7 +37,7 @@ def signin():
         validate_result = user_service.validate_email_and_password(user)
         if not validate_result.is_success():
             return bad_request("Invalid input", validate_result.data)
-        signin_result = user_service.login_services(user['email'], user['password'])
+        signin_result = user_service.login(user['email'], user['password'])
         if not signin_result.is_success():
             return bad_request("sign in account failed!", signin_result.data)
         else:

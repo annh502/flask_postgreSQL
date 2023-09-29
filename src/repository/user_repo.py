@@ -1,12 +1,6 @@
-from werkzeug.security import generate_password_hash, check_password_hash
-
 from database.database import db
 from src.share.Result import Result
 from src.models.User import User
-
-def encrypt_password(password):
-    """Encrypt password"""
-    return generate_password_hash(password)
 
 
 def get_all():
@@ -19,7 +13,7 @@ def get_by_id(user_id):
     """Get a user by id"""
     user = User.query.filter_by(id=user_id).first()
     if not user:
-        return Result.failed(user_id)
+        return Result.failed("User doesn't exist: " + str(user_id))
     return Result.success(user)
 
 
@@ -31,68 +25,32 @@ def get_by_email(email):
     return Result.success(user)
 
 
-def login(email, password):
-    """Login a user"""
-    user_result = get_by_email(email)
-    user = user_result.data
-    if not user_result.is_success():
-        return Result.failed(email)
-    elif not check_password_hash(user.password, password):
-        return Result.failed(password)
-    auth_token = user.encode_auth_token(user.id)
-    return Result.success(auth_token)
-
-
-def save(name="", email="", password=""):
+def save(new_user):
     """Create a new user"""
     try:
-        user = get_by_email(email)
-        if user.is_success():
-            return Result.failed("Email exists: " + str(email))
-        try:
-            new_user = User(email, name, generate_password_hash(password))
-            db.session.add(new_user)
-            db.session.commit()
-            auth_token = new_user.encode_auth_token(new_user.id)
-            return Result.success(str(auth_token))
-        except Exception as e:
-            return Result.failed("Cannot save" + str(e))
-    except Exception as e2:
-        return Result.failed(str(e2))
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as e:
+        return Result.failed("Cannot save" + str(e))
 
 
-def update(user_id, data):
+def update(old_user, user):
     """Update a user"""
     try:
-        user_result = get_by_id(user_id)
-        if not user_result.is_success():
-            return Result.failed(user_id)
-        try:
-            user = user_result.data
-            if data["name"]:
-                user.username = data['name']
-            if data["email"]:
-                user.email = data["email"]
-            db.session.commit()
-            return Result.success(user_id)
-        except Exception as e:
-            return Result.failed("Cannot save" + str(e))
-    except Exception as e2:
-        return Result.failed(str(e2))
+        if user["name"]:
+            old_user.username = user['name']
+        if user["email"]:
+            old_user.email = user["email"]
+        db.session.commit()
+        return Result.success(str(old_user))
+    except Exception as e:
+        return Result.failed("Cannot save" + str(e))
 
 
-def delete(user_id):
+def delete(user):
     try:
-        user_result = get_by_id(user_id)
-        if not user_result.is_success():
-            return Result.failed(user_id)
-        try:
-            user = user_result.data
-            db.session.delete(user)
-            db.session.commit()
-            return Result.success(user_id)
-        except Exception as e:
-            return Result.failed("Cannot save" + str(e))
-
-    except Exception as e2:
-        return Result.failed(str(e2))
+        db.session.delete(user)
+        db.session.commit()
+        return Result.success(str(user))
+    except Exception as e:
+        return Result.failed("Cannot save" + str(e))
