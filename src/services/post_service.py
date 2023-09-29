@@ -1,4 +1,4 @@
-from src.repository import post_repo, user_repo
+from src.repository import post_repo, user_repo, like_repo
 from src.share.Result import Result
 
 
@@ -42,3 +42,25 @@ def delete_post(post_id):
         return post_repo.delete(post.data)
     except Exception as e:
         return Result.failed("Error at post_service: " + str(e))
+
+
+def count_likes(post_id):
+    try:
+        return like_repo.count_likes(post_id)
+    except Exception as e:
+        return Result.failed("Error in post services: " + str(e))
+
+
+def like_post(author_id, post_id):
+    try:
+        if not post_repo.get_by_id(post_id):
+            return Result.failed("Post doesn't exist: " + post_id)
+        if not user_repo.get_by_id(author_id):
+            return Result.failed("User doesn't exist: " + author_id)
+        post_like_result = like_repo.get_id_by_post_author(post_id, author_id)
+        if post_like_result.is_success():
+            return like_repo.delete(post_like_result.data)
+        else:
+            return like_repo.save(post_id, author_id)
+    except Exception as e:
+        return Result.failed("Cannot save" + str(e))

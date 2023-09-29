@@ -5,6 +5,7 @@ from flask import request, abort
 from flask import current_app
 from src.share.api.ResponseEntityFactory import *
 from src.models.User import User
+from src.models.BlacklistToken import BlacklistToken
 from src.repository import user_repo
 
 
@@ -18,6 +19,8 @@ def token_required(f):
             return unauthorized("Authentication Token is missing!")
 
         try:
+            if BlacklistToken.query.filter_by(token=token).first():
+                raise jwt.ExpiredSignatureError
             data = User.decode_auth_token(token)
             current_user = user_repo.get_by_id(data)
             if current_user is None:
@@ -29,8 +32,8 @@ def token_required(f):
         except Exception as e:
             return internal_server_error("Something went wrong: " + str(e))
 
-        return f(current_user, *args, **kwargs)
+        return f(token, *args, **kwargs) \
+            if f.__name__ == "sign_out" \
+            else f(current_user, *args, **kwargs)
 
     return decorated
-
-

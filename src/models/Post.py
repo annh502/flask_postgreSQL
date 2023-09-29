@@ -22,11 +22,8 @@ class Post(db.Model):
         self.author_id = author_id
 
     def __repr__(self):
-        return ('''
-        {
-            "id": {},
-            "title": {},
-            "short_description": {},
-            "body": {},
-            "created_at": {}
-                ''').format(self.id, self.title, self.short_description, self.body, self.created_at)
+        return str({"id": self.id,
+                "title": self.title,
+                "short_description": self.short_description,
+                "body": self.body,
+                "created_at": self.created_at})

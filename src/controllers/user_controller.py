@@ -1,7 +1,7 @@
 from flask import request
 from src.services import user_service
 from src.share.api.ResponseEntityFactory import *
-from src.repository import user_repo
+from src.repository import user_repo, comment_repo
 from flask import Blueprint
 from auth_middleware import token_required
 
@@ -25,7 +25,8 @@ def signup():
         if not signup_result.is_success():
             return bad_request("Create account failed!", signup_result.data)
         else:
-            return ok("Create account success! " + signup_result.data)
+            result = {"token": signup_result.data}
+            return ok(result)
     except Exception as e:
         return internal_server_error(f"System Error: {str(e)}")
 
@@ -42,6 +43,18 @@ def signin():
             return bad_request("sign in account failed!", signin_result.data)
         else:
             return ok("Sign in account success! " + signin_result.data)
+    except Exception as e:
+        return internal_server_error(f"System Error: {str(e)}")
+
+
+@auth.route("/signout", methods=['POST'])
+@token_required
+def sign_out(token):
+    try:
+        sign_out_result = user_service.log_out(token)
+        if sign_out_result.is_success():
+            return ok(sign_out_result.data)
+        return bad_request(sign_out_result.data)
     except Exception as e:
         return internal_server_error(f"System Error: {str(e)}")
 
@@ -90,5 +103,18 @@ def disable(current_user, account_id):
         return ok("Disable account success! " + str(disable_result.data))
     except Unauthorized:
         return unauthorized("You're not authorized to delete this user!")
+    except Exception as e:
+        return internal_server_error(f"System Error: {str(e)}")
+
+
+@auth.route("/comments", methods=['GET'])
+@token_required
+def get_comments(current_user):
+    try:
+        author_id = current_user.data.id
+        comments_result = comment_repo.get_all_by_author_id(author_id)
+        return ok(comments_result.data) \
+            if comments_result.is_success() \
+            else bad_request(comments_result.data)
     except Exception as e:
         return internal_server_error(f"System Error: {str(e)}")

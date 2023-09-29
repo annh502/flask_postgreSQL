@@ -36,6 +36,7 @@ def create_app():
     from src.models.Comment import Comment
     from src.models.Like import Like
     from src.models.PostComment import PostComment
+    from src.models.BlacklistToken import BlacklistToken
 
     return temp_app
 
