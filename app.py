@@ -1,12 +1,13 @@
 from flask import Flask
-from database import database
+from flask_restx import Api
 from database import database
 from src.controllers.post_controller import post_route
 from src.controllers.user_controller import auth
 from flask_swagger_ui import get_swaggerui_blueprint
 
-SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
-API_URL = 'http://127.0.0.1:3000'  # Our API url (can of course be a local resource
+SWAGGER_URL = '/swagger'
+API_URL = '/swagger.json'
+
 
 def create_app():
     temp_app = Flask(__name__)
@@ -15,7 +16,7 @@ def create_app():
 
     database.init_app(temp_app)
 
-    swaggerui_blueprint = get_swaggerui_blueprint(
+    swagger_ui_blueprint = get_swaggerui_blueprint(
         SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
         API_URL,
         config={  # Swagger UI config overrides
@@ -25,7 +26,7 @@ def create_app():
 
     temp_app.register_blueprint(auth, url_prefix="/user")
     temp_app.register_blueprint(post_route, url_prefix="/")
-    temp_app.register_blueprint(swaggerui_blueprint)
+    temp_app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_URL)
 
     with temp_app.app_context():
         from manage import migrate
@@ -41,7 +42,10 @@ def create_app():
 
 run_app = create_app()
 
-# api_app = Api(app=run_app)
+api_app = Api(app=run_app,
+              version="1.0",
+              title="Blog",
+              description="Manage names of various users of the application")
 
 if __name__ == "__main__":
     run_app.run(debug=True, port=3000)

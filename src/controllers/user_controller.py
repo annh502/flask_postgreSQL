@@ -92,5 +92,3 @@ def disable(current_user, account_id):
         return unauthorized("You're not authorized to delete this user!")
     except Exception as e:
         return internal_server_error(f"System Error: {str(e)}")
-
-
