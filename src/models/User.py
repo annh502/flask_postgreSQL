@@ -28,21 +28,22 @@ class User(db.Model):
         self.password = password
 
     def __str__(self):
-        return '''
-        {
-            "id": {},
-            "email": {},
-            "username": {},
-            "registered_on": {}
-        '''.format(self.id, self.email, self.username, self.registered_on)
+        return str(
+            {
+                "id": self.id,
+                "email": self.email,
+                "username": self.username,
+                "registered_on": self.registered_on.strftime("%m/%d/%Y, %H:%M:%S")
+            }
+        )
 
-    def isAdmin(self):
+    def is_admin(self):
         return self.admin
 
     def encode_auth_token(self, user_id):
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=15),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=60),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }

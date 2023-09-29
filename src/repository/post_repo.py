@@ -29,12 +29,12 @@ def save(data, author_id):
         new_post = Post(data['title'], data['short_description'], data['body'], author_id)
         db.session.add(new_post)
         db.session.commit()
-        return Result.success(str(new_post))
+        return Result.success(new_post)
     except Exception as e:
         return Result.failed("Cannot save" + str(e))
 
 
-def update(old_post, post):
+def update(old_post, post, author_id):
     """Update a post"""
     try:
         if post['title']:
@@ -43,8 +43,9 @@ def update(old_post, post):
             old_post.short_description = post['short_description']
         if post['body']:
             old_post.body = post['body']
+        old_post.author_id = int(author_id)
         db.session.commit()
-        return Result.success(str(post))
+        return Result.success(post)
     except Exception as e:
         return Result.failed("Cannot save" + str(e))
 
@@ -52,7 +53,7 @@ def update(old_post, post):
 def delete(post):
     """Delete a post"""
     try:
-        db.session.delete(post.data)
+        db.session.delete(post)
         db.session.commit()
         return Result.success(post.__repr__())
     except Exception as e:

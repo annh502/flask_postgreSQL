@@ -36,6 +36,7 @@ def create_app():
     from src.models.Comment import Comment
     from src.models.Like import Like
     from src.models.PostComment import PostComment
+    from src.models.BlacklistToken import BlacklistToken
 
     return temp_app
 
@@ -48,4 +49,4 @@ api_app = Api(app=run_app,
               description="Manage names of various users of the application")
 
 if __name__ == "__main__":
-    run_app.run(debug=True, port=3000)
+    run_app.run(debug=True, host='0.0.0.0')

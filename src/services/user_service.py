@@ -61,9 +61,16 @@ def create_user(name, email, password):
         if name is None:
             return Result.failed("Username must not be null.")
         new_user = User(email, name, generate_password_hash(password))
-        return new_user.encode_auth_token(new_user.id) \
+        return Result.success(new_user.encode_auth_token(new_user.id)) \
             if user_repo.save(new_user).is_success() \
-            else "Cannot save"
+            else Result.failed("Cannot save: ")
+    except Exception as e:
+        return Result.failed("Error in user services: " + str(e))
+
+
+def log_out(token):
+    try:
+        return user_repo.logout(token)
     except Exception as e:
         return Result.failed("Error in user services: " + str(e))
 
@@ -99,7 +106,7 @@ def disable_account(user_id, account_id):
             return Result.failed(account.data)
 
         admin = admin.data
-        if not admin.isAdmin():
+        if not admin.is_admin():
             raise Unauthorized("You're not authorized to delete this user!")
 
         return user_repo.delete(account.data)

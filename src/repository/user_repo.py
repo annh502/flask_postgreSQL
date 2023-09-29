@@ -1,6 +1,7 @@
 from database.database import db
 from src.share.Result import Result
 from src.models.User import User
+from src.models.BlacklistToken import BlacklistToken
 
 
 def get_all():
@@ -30,6 +31,18 @@ def save(new_user):
     try:
         db.session.add(new_user)
         db.session.commit()
+        return Result.success(new_user)
+    except Exception as e:
+        return Result.failed("Cannot save" + str(e))
+
+
+def logout(token):
+    """Log out an user"""
+    try:
+        blacklist_token = BlacklistToken(token)
+        db.session.add(blacklist_token)
+        db.session.commit()
+        return Result.success(blacklist_token)
     except Exception as e:
         return Result.failed("Cannot save" + str(e))
 
@@ -42,7 +55,7 @@ def update(old_user, user):
         if user["email"]:
             old_user.email = user["email"]
         db.session.commit()
-        return Result.success(str(old_user))
+        return Result.success(old_user)
     except Exception as e:
         return Result.failed("Cannot save" + str(e))
 
@@ -51,6 +64,6 @@ def delete(user):
     try:
         db.session.delete(user)
         db.session.commit()
-        return Result.success(str(user))
+        return Result.success(user)
     except Exception as e:
         return Result.failed("Cannot save" + str(e))
