@@ -21,6 +21,7 @@ class Post(db.Model):
         self.author_id = author_id
 
     def __repr__(self):
+<<<<<<< HEAD
         return str(
             {"id": self.id,
                 "title": self.title,
@@ -29,3 +30,10 @@ class Post(db.Model):
                 "created_at": self.created_at.strftime("%m/%d/%Y, %H:%M:%S")
             }
         )
+=======
+        return str({"id": self.id,
+                "title": self.title,
+                "short_description": self.short_description,
+                "body": self.body,
+                "created_at": self.created_at})
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc

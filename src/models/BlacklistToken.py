@@ -21,6 +21,10 @@ class BlacklistToken(db.Model):
             {
                 "id": self.id,
                 "token": self.token,
+<<<<<<< HEAD
                 "blacklisted_on": self.blacklisted_on.strftime("%m/%d/%Y, %H:%M:%S")
+=======
+                "blacklisted_on": self.blacklisted_on
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc
             }
         )

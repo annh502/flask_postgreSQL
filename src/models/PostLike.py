@@ -5,17 +5,26 @@ from database.database import db
 
 
 class PostLike(db.Model):
+<<<<<<< HEAD
     __tablename__ = "post_likes"
     like_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("likes.id", ondelete='CASCADE'), primary_key=True)
     post_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("posts.id", ondelete='CASCADE'), nullable=False, primary_key=True)
     author_id: Mapped[int] = mapped_column(
         db.Integer, db.ForeignKey("users.id", ondelete='CASCADE'), nullable=False, primary_key=True
+=======
+    __tablename__ = "likes"
+    like_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("likes.id"), primary_key=True)
+    post_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("posts.id"), nullable=False, primary_key=True)
+    author_id: Mapped[int] = mapped_column(
+        db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, primary_key=True
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc
     )
 
     def __init__(self, like_id, post_id, author_id):
         self.like_id = like_id
         self.post_id = post_id
         self.author_id = author_id
+<<<<<<< HEAD
 
     def __repr__(self):
         return str(
@@ -25,3 +34,5 @@ class PostLike(db.Model):
                 "author_id": self.author_id
             }
         )
+=======
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc

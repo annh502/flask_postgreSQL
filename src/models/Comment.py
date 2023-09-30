@@ -15,6 +15,7 @@ class Comment(db.Model):
 
     def __init__(self, content):
         self.content = content
+<<<<<<< HEAD
 
     def __repr__(self):
         return str(
@@ -24,3 +25,5 @@ class Comment(db.Model):
              "updated_at": self.updated_at.strftime("%m/%d/%Y, %H:%M:%S")
              }
         )
+=======
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc

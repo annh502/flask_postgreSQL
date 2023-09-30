@@ -66,7 +66,11 @@ def delete_post(current_user, post_id):
         old_post = post_service.get_post(post_id)
         if not old_post.is_success():
             return bad_request(old_post.data, post_id)
+<<<<<<< HEAD
         if int(old_post.data.author_id) != int(current_user.data.id) and not current_user.data.is_admin():
+=======
+        if old_post.data.author_id != current_user.data.id or not current_user.data.is_admin():
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc
             return bad_request("You're not allowed to delete this post")
         delete_result = post_service.delete_post(post_id)
         return ok(delete_result.data) \
@@ -101,11 +105,19 @@ def get_comments(post_id):
         return internal_server_error(f"System Error: {str(e)}")
 
 
+<<<<<<< HEAD
 @post_route.route("/<int:post_id>/likes", methods=['GET'])
 def get_likes(post_id):
     try:
         likes_result = post_service.count_likes(post_id)
         return make_response(jsonify(likes_result, 200)) \
+=======
+@post_route.route("/<int:post:id>/likes", methods=['GET'])
+def get_likes(post_id):
+    try:
+        likes_result = post_service.count_likes(post_id)
+        return ok(likes_result.data) \
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc
             if likes_result.is_success() \
             else bad_request(likes_result.data)
     except Exception as e:

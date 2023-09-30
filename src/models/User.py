@@ -28,6 +28,7 @@ class User(db.Model):
         self.password = password
 
     def __str__(self):
+<<<<<<< HEAD
         return str(
             {
                 "id": self.id,
@@ -36,6 +37,12 @@ class User(db.Model):
                 "registered_on": self.registered_on.strftime("%m/%d/%Y, %H:%M:%S")
             }
         )
+=======
+        return str({"id": self.id,
+                "email": self.email,
+                "username": self.username,
+                "registered_on": self.registered_on})
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc
 
     def is_admin(self):
         return self.admin

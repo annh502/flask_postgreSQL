@@ -48,8 +48,11 @@ def count_likes(post_id):
     try:
         return like_repo.count_likes(post_id)
     except Exception as e:
+<<<<<<< HEAD
         raise Intern
         abort(make_response(jsonify({'error': 'bug'}, 400)))
+=======
+>>>>>>> 13ab5df58cd4d788ba35939baf9dcef94ceed2bc
         return Result.failed("Error in post services: " + str(e))
 
 
